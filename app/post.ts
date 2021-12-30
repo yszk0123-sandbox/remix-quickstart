@@ -2,10 +2,12 @@ import path from "path";
 import fs from "fs/promises";
 import parseFrontMatter from "front-matter";
 import invariant from "tiny-invariant";
+import { marked } from "marked";
 
 export type Post = {
   slug: string;
   title: string;
+  html: string;
 };
 
 export type PostMarkdownAttributes = {
@@ -43,4 +45,19 @@ export async function getPosts() {
       };
     })
   );
+}
+
+export async function getPost(slug: string): Promise<Post> {
+  const filepath = path.join(postsPath, `${slug}.md`);
+  const file = await fs.readFile(filepath);
+  const { attributes, body } = parseFrontMatter(file.toString());
+
+  invariant(
+    isValidPostAttributes(attributes),
+    `Post ${filepath} is missing attributes`
+  );
+
+  const html = marked(body);
+
+  return { slug, html, title: attributes.title };
 }
