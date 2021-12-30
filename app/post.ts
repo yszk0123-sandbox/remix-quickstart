@@ -61,3 +61,18 @@ export async function getPost(slug: string): Promise<Post> {
 
   return { slug, html, title: attributes.title };
 }
+
+export async function createPost(post) {
+  const md = [
+    `---`,
+    `title: ${post.title}`,
+    `---`,
+    ``,
+    `${post.markdown}`,
+  ].join("\n");
+  const filepath = path.join(postsPath, `${post.slug}.md`);
+
+  await fs.writeFile(filepath, md);
+
+  return getPost(post.slug);
+}
