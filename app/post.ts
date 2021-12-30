@@ -10,6 +10,12 @@ export type Post = {
   html: string;
 };
 
+export type NewPost = {
+  title: string;
+  slug: string;
+  markdown: string;
+};
+
 export type PostMarkdownAttributes = {
   title: string;
 };
@@ -62,7 +68,7 @@ export async function getPost(slug: string): Promise<Post> {
   return { slug, html, title: attributes.title };
 }
 
-export async function createPost(post) {
+export async function createPost(post: NewPost): Promise<Post> {
   const md = [
     `---`,
     `title: ${post.title}`,
